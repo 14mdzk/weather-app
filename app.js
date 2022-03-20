@@ -4,7 +4,7 @@ import { hideBin } from "yargs/helpers";
 
 const yarg = yargs(hideBin(process.argv));
 
-const lookForPlace = (place) => {
+const geocode = (place) => {
   const mapUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${place}.json?country=id&proximity=ip&types=place%2Caddress%2Cdistrict%2Cregion%2Cneighborhood%2Clocality&language=id&access_token=pk.eyJ1IjoiaW1kemFpbiIsImEiOiJja3FrZW50aGczcTR0Mndtdjk5MzQ1b3oxIn0.WLhCCd0SIqCJ6cYuoBW4Rw`;
   return axios
     .get(mapUrl)
@@ -19,7 +19,7 @@ const lookForPlace = (place) => {
     });
 };
 
-const weatherInfo = (lon, lat) => {
+const forecast = (lon, lat) => {
   const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=f373819bc0306846013611d797e1adb8`;
   if (lon == 0 && lat == 0) return "place wasn't found";
 
@@ -52,8 +52,8 @@ yarg.command({
       console.error("place can't be empty");
       return false;
     }
-    const place = await lookForPlace(argv.place);
-    const weather = await weatherInfo(...place.center);
+    const place = await geocode(argv.place);
+    const weather = await forecast(...place.center);
 
     await console.log(
       `Place:\n${place.place_name}\nWeather Condidtion: \n${weather.description}`
